@@ -67,7 +67,7 @@ Hosting	Azure App Service
 Documentation	Swagger / OpenAPI
 Logging	Custom middleware
 Deployment	GitHub, CLI, Visual Studio
-
+📦 Project Structure
 Billing.Api/
  ├── Controllers/
  │    ├── AuthController.cs
@@ -84,6 +84,7 @@ Billing.Api/
  ├── appsettings.json
  ├── Program.cs
  └── Billing.Api.csproj
+
 🔥 Authentication
 Login Request Body
 {
@@ -192,7 +193,7 @@ Swagger enabled in production via:
 
 Deployed live at:
 
-[https://billingpaymentsystem-<region>.azurewebsites.net/](https://billingpaymentsystem-fpagf3eda5bqfqh6.francecentral-01.azurewebsites.net)
+https://billingpaymentsystem-<region>.azurewebsites.net/
 
 🧪 Testing via Swagger
 
