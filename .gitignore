@@ -1,0 +1,63 @@
+###############
+# .NET / C#
+###############
+ 
+# build output
+bin/
+obj/
+ 
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+ 
+# Rider / VS Code
+.idea/
+.vscode/
+ 
+# ASP.NET logs
+logs/
+*.log
+ 
+# Azure publish artifacts
+**/Properties/PublishProfiles/
+*.pubxml
+*.pubxml.user
+ 
+#######################
+# CONFIG / SECRETS
+#######################
+ 
+# ALL appsettings.json files — REAL CONFIG NEVER GOES TO GIT
+appsettings*.json
+# allow example configs (if you create them)
+!appsettings*.example.json
+!appsettings*.json.example
+ 
+# .env files
+.env
+.env.*
+!.env.example
+ 
+#######################
+# SYSTEM / OS
+#######################
+ 
+# macOS
+.DS_Store
+ 
+# Windows
+Thumbs.db
+ 
+#######################
+# OTHER
+#######################
+ 
+# migrations cache (actual EF migrations folder is OK)
+#migrations/
+ 
+# cache
+*.cache
+*.temp
