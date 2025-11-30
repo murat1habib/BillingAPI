@@ -193,7 +193,7 @@ Swagger enabled in production via:
 
 Deployed live at:
 
-https://billingpaymentsystem-<region>.azurewebsites.net/
+[https://billingpaymentsystem-<region>.azurewebsites.net/](https://billingpaymentsystem-fpagf3eda5bqfqh6.francecentral-01.azurewebsites.net)
 
 🧪 Testing via Swagger
 
