@@ -1,222 +1,218 @@
-Billing Payment System API
+💳 AI-Assisted Billing System (Local Setup)
 
-A fully functional billing management backend developed using ASP.NET Core 8, Entity Framework Core, JWT Authentication, Azure SQL, and Azure App Service.
-This API supports three roles:
+This project is a local, AI-assisted billing system that allows users to query and pay bills through a chat-based interface.
 
-Admin (manages bills)
+It demonstrates how a Large Language Model (LLM) can be integrated into a real backend system to understand user intent, route requests, and trigger real API calls — all running locally.
 
-Mobile user (queries bills)
+🚀 What This Project Does
 
-Banking/Payment service (processes payments)
+Users can interact with a billing system using natural language:
 
-The system includes JWT-based authentication, CSV batch bill import, request/response logging, and complete Swagger documentation.
+Ask for their bill
 
-🚀 Features
-🔐 Authentication (JWT)
+Request a detailed bill breakdown
 
-Separate login flows for Admin, Mobile, and Banking clients
+See payment status
 
-Secure token generation with configurable expiration
+Pay bills using a Pay Now button
 
-📄 Admin Capabilities
+All interactions happen through a chat UI, backed by a real API, without exposing backend endpoints directly.
 
-Add bill for a subscriber
+🧱 System Architecture (Local)
+[ React Chat UI ]
+        ↓ (Firestore)
+[ Python LLM Agent ]
+        ↓ (HTTP)
+[ Node.js Gateway ]
+        ↓ (JWT)
+[ ASP.NET Core Billing API ]
+        ↓
+[ Local Database ]
 
-Upload bills in bulk using CSV
+🧩 Components
+1️⃣ Billing API (ASP.NET Core 8)
 
-View detailed error reports for invalid rows
+Core business logic
 
-Azure SQL database integration
+Bill management
 
-📱 Mobile User Capabilities
+Payment simulation
 
-Login to receive token
+Role-based authorization
 
-Query latest bill
+2️⃣ Gateway Service (Node.js)
 
-Check bill payment status
+Acts as a secure proxy
 
-🏦 Banking API Capabilities
+Injects JWT tokens automatically
 
-Mocked payment endpoint
+Separates client access from backend API
 
-Marks bill as paid
+3️⃣ LLM Agent (Python + Ollama)
 
-Simulates external bank transaction
+Uses a local LLM (Ollama)
 
-🛠 Infrastructure
+Extracts intent & slots from user messages
 
-Swagger documentation and UI
+Produces strict JSON output
 
-EF Core migrations
+Decides which backend endpoint to call
 
-Azure SQL database
+4️⃣ Chat UI (React + Firebase)
 
-Azure App Service deployment
+Real-time messaging with Firestore
 
-Custom request/response logging middleware
+Displays assistant responses
 
-CORS enabled for all origins
+Shows Pay Now button only when allowed
 
-🧱 Technologies Used
-Component	Technology
-Backend Framework	ASP.NET Core 8
+No page refresh required
+
+🤖 LLM Capabilities
+
+The LLM is used only for intent understanding, not for business logic.
+
+Supported intents:
+
+query_bill
+
+query_bill_detailed
+
+pay_bill
+
+help
+
+Example user messages:
+
+“Show my bill”
+
+“Show detailed bill”
+
+“Is my bill paid?”
+
+The LLM always returns valid JSON only, which is then validated and executed safely.
+
+🔐 Authentication & Roles
+
+JWT-based authentication with role separation:
+
+Role	Description
+Admin	Manages bills (API-level)
+Mobile	Queries bills
+Banking	Processes payments
+
+Tokens are handled internally by the Gateway.
+
+📱 Chat-Based Flow
+
+User sends a message
+
+Message is saved to Firestore
+
+Python agent listens for new messages
+
+LLM extracts intent and parameters
+
+Agent calls Gateway
+
+Gateway calls Billing API
+
+Response is sent back to chat
+
+UI updates in real time
+
+🛠 Technologies Used
+Layer	Technology
+Backend API	ASP.NET Core 8
+ORM	Entity Framework Core
+Database	Local SQL Database
 Authentication	JWT Bearer Tokens
-Database	Azure SQL + Entity Framework Core
-Hosting	Azure App Service
-Documentation	Swagger / OpenAPI
-Logging	Custom middleware
-Deployment	GitHub, CLI, Visual Studio
+Gateway	Node.js (Express)
+AI Agent	Python
+LLM Runtime	Ollama
+LLM Model	LLaMA 3.1
+Frontend	React
+Realtime DB	Firebase Firestore
+API Docs	Swagger
 📦 Project Structure
 Billing.Api/
- ├── Controllers/
- │    ├── AuthController.cs
- │    ├── AdminController.cs
- │    ├── MobileController.cs
- │    └── BankingController.cs
- ├── Data/
- │    ├── BillingDbContext.cs
- │    └── SeedData.cs
- ├── Models/
- ├── Dtos/
- ├── Middleware/
- │    └── RequestResponseLogging.cs
- ├── appsettings.json
- ├── Program.cs
- └── Billing.Api.csproj
+│
+├── Controllers/
+│   ├── AuthController.cs
+│   ├── AdminController.cs
+│   ├── MobileController.cs
+│   └── BankingController.cs
+│
+├── Data/
+│   ├── BillingDbContext.cs
+│   └── SeedData.cs
+│
+├── Models/
+├── Dtos/
+├── Middleware/
+│
+gateway-node/
+agent-python/
+frontend-react/
 
-🔥 Authentication
-Login Request Body
-{
-  "clientType": "Admin",
-  "username": "admin",
-  "password": "123456"
-}
+▶️ Running the Project Locally
+1️⃣ Start Billing API
+dotnet run
 
+2️⃣ Start Gateway
+cd gateway-node
+npm install
+npm start
 
-ClientType can be:
+3️⃣ Start LLM (Ollama)
+ollama run llama3.1
 
-"Admin"
+4️⃣ Start LLM Agent
+cd agent-python
+python main.py
 
-"Mobile"
+5️⃣ Start Frontend
+cd frontend-react
+npm install
+npm start
 
-"Bank"
+🧪 Testing
 
-After login:
+Chat UI is the main interaction point
 
-Copy your token → Click Authorize in Swagger → Paste as:
+Swagger is available for backend inspection
 
-Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+All requests flow through the Gateway and Agent
 
-🧑‍💼 Admin Endpoints
-➕ Add a Bill
+🔒 Security Notes
 
-POST /api/v1/admin/add-bill
+No secrets are committed to GitHub
 
-{
-  "subscriberNo": "1001",
-  "year": 2025,
-  "month": 12,
-  "totalAmount": 300
-}
+.env and service account files are ignored
 
-🗂 Upload CSV Batch
+All communication is local
 
-POST /api/v1/admin/add-bill-batch
+🎥 Demo Video
 
-CSV format:
+The demo video shows:
 
-SubscriberNo,Year,Month,TotalAmount
-1001,2024,12,200
-1002,2024,11,150
+Chat-based bill queries
 
+LLM intent extraction
 
-Returns success and error counts.
+Bill detail vs summary
 
-📱 Mobile Endpoints
-📌 Mobile Login
+Payment flow with Pay Now button
 
-POST /api/v1/auth/login
+(Source code is intentionally not shown in the video.)
 
-{
-  "clientType": "Mobile",
-  "username": "murat",
-  "password": "123456"
-}
+✅ Current Status
 
-🔍 Query Bill
+✔ Fully local
+✔ Stable LLM integration
+✔ Chat-based UX complete
+✔ Ready for demo & submission
 
-GET /api/v1/mobile/query-bill?subscriberNo=1001
+📌 Final Note
 
-Response example:
-
-{
-  "subscriberNo": "1001",
-  "month": 12,
-  "year": 2025,
-  "billTotal": 300,
-  "isPaid": false
-}
-
-🏦 Banking Endpoints
-💰 Pay Bill
-
-POST /api/v1/banking/pay
-
-{
-  "iban": "TR00000000001",
-  "amount": 300,
-  "subscriberNo": "1001"
-}
-
-
-Marks bill as paid in Azure SQL.
-
-🌐 Azure Deployment
-Used Services:
-
-Azure SQL Database
-
-Azure App Service
-
-Azure API Management (optional)
-
-ConnectionStrings stored securely
-
-Swagger enabled in production via:
-
-"Swagger": {
-  "EnableInProduction": true,
-  "ServerUrl": ""
-}
-
-
-Deployed live at:
-
-[https://billingpaymentsystem-<region>.azurewebsites.net/](https://billingpaymentsystem-fpagf3eda5bqfqh6.francecentral-01.azurewebsites.net)
-
-🧪 Testing via Swagger
-
-Go to root URL
-
-Swagger UI automatically opens (RoutePrefix = "")
-
-Login
-
-Authorize
-
-Test endpoints freely
-
-📝 Logging Middleware
-
-Every request and response is logged:
-
-app.UseRequestResponseLogging();
-
-
-Helps with debugging and API monitoring.
-
-🗄 Database Migration Commands
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-
+This project focuses on practical LLM usage, not just AI text generation — demonstrating how LLMs can safely drive real backend workflows.
