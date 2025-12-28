@@ -206,6 +206,8 @@ Payment flow with Pay Now button
 
 (Source code is intentionally not shown in the video.)
 
+Video : https://youtu.be/8v6b_nP-d6Y
+
 ✅ Current Status
 
 ✔ Fully local
