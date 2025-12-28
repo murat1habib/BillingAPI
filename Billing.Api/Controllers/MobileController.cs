@@ -29,40 +29,6 @@ namespace Billing.Api.Controllers
     [FromQuery] int year,
     [FromQuery] int month)
         {
-            // === Rate limiting: same subscriber, max 3 queries per day ===
-            var today = DateTime.UtcNow.Date;
-
-            var log = await _context.QueryLimitLogs
-                .FirstOrDefaultAsync(x =>
-                    x.SubscriberNo == subscriberNo &&
-                    x.Date == today);
-
-            if (log == null)
-            {
-                // İlk sorgu
-                log = new QueryLimitLog
-                {
-                    SubscriberNo = subscriberNo,
-                    Date = today,
-                    Count = 1
-                };
-                _context.QueryLimitLogs.Add(log);
-            }
-            else
-            {
-                if (log.Count >= 3)
-                {
-                    // Limit aşıldı → 429 Too Many Requests
-                    return StatusCode(StatusCodes.Status429TooManyRequests,
-                        $"Daily query limit exceeded for subscriber {subscriberNo}. Max 3 per day.");
-                }
-
-                log.Count++;
-            }
-
-            await _context.SaveChangesAsync();
-            // === Rate limit kontrolü bitti ===
-
             var bill = await _context.Bills
                 .Include(b => b.Subscriber)
                 .FirstOrDefaultAsync(b =>
@@ -86,6 +52,65 @@ namespace Billing.Api.Controllers
 
             return Ok(dto);
         }
+
+        // GET: api/v1/mobile/query-bill-detailed
+        // Query Bill Detailed: SubscriberNo + Year + Month + paging for bill details
+        [HttpGet("query-bill-detailed")]
+        public async Task<ActionResult<BillDetailedDto>> QueryBillDetailed(
+            [FromQuery] string subscriberNo,
+            [FromQuery] int year,
+            [FromQuery] int month,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 5)
+        {
+            if (page <= 0) page = 1;
+            if (pageSize <= 0) pageSize = 5;
+            if (pageSize > 50) pageSize = 50;
+
+            // (İstersen rate limit'i buraya da kopyalayabiliriz; şimdilik minimal tutuyoruz)
+
+            var bill = await _context.Bills
+                .Include(b => b.Subscriber)
+                .Include(b => b.Details)
+                .FirstOrDefaultAsync(b =>
+                    b.Subscriber!.SubscriberNo == subscriberNo &&
+                    b.Year == year &&
+                    b.Month == month);
+
+            if (bill == null)
+                return NotFound($"Bill not found for subscriber {subscriberNo} {year}-{month:D2}");
+
+            var totalDetailCount = bill.Details.Count;
+
+            var paged = bill.Details
+                .OrderBy(d => d.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(d => new BillDetailDto
+                {
+                    Id = d.Id,
+                    Description = d.Description,
+                    ItemType = d.ItemType,
+                    Amount = d.Amount
+                })
+                .ToList();
+
+            var dto = new BillDetailedDto
+            {
+                SubscriberNo = subscriberNo,
+                Year = bill.Year,
+                Month = bill.Month,
+                BillTotal = bill.TotalAmount,
+                IsPaid = bill.IsPaid,
+                Page = page,
+                PageSize = pageSize,
+                TotalDetailCount = totalDetailCount,
+                Details = paged
+            };
+
+            return Ok(dto);
+        }
+
     }
 }
 

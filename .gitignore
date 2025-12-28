@@ -1,63 +1,125 @@
-###############
+################################
 # .NET / C#
-###############
- 
-# build output
+################################
+
+# Build outputs
 bin/
 obj/
- 
+
 # Visual Studio
 .vs/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
- 
+
 # Rider / VS Code
 .idea/
 .vscode/
- 
+
 # ASP.NET logs
 logs/
 *.log
- 
+
 # Azure publish artifacts
 **/Properties/PublishProfiles/
 *.pubxml
 *.pubxml.user
- 
-#######################
-# CONFIG / SECRETS
-#######################
- 
-# ALL appsettings.json files — REAL CONFIG NEVER GOES TO GIT
+
+
+################################
+# CONFIG / SECRETS (CRITICAL)
+################################
+
+# appsettings (real configs never go to git)
 appsettings*.json
-# allow example configs (if you create them)
 !appsettings*.example.json
 !appsettings*.json.example
- 
-# .env files
+
+# Environment variables
 .env
 .env.*
 !.env.example
- 
-#######################
-# SYSTEM / OS
-#######################
- 
-# macOS
-.DS_Store
- 
-# Windows
-Thumbs.db
- 
-#######################
-# OTHER
-#######################
- 
-# migrations cache (actual EF migrations folder is OK)
-#migrations/
- 
-# cache
+
+# Firebase / Google service accounts
+serviceAccountKey.json
+*serviceAccount*.json
+*adminsdk*.json
+
+# Other secret-like files
+secrets.json
+credentials.json
+
+
+################################
+# NODE / FRONTEND / GATEWAY
+################################
+
+# Dependencies
+**/node_modules/
+
+# Build outputs
+**/dist/
+**/build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+################################
+# PYTHON (agent-python)
+################################
+
+# Virtual environments
+**/.venv/
+**/venv/
+
+# Cache
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
 *.cache
 *.temp
+
+
+################################
+# DATABASE / EF
+################################
+
+# Local DB files
+*.db
+*.sqlite
+*.sqlite3
+
+# EF Core migration cache (actual Migrations folder is OK)
+#migrations/
+
+
+################################
+# SYSTEM / OS
+################################
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+
+################################
+# OTHER
+################################
+
+# Coverage / test outputs
+coverage/
+*.coverage
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
